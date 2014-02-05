@@ -1,20 +1,13 @@
 #define _BSD_SOURCE
-#include <unistd.h>
+#include <unistd.h> /* sleep() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <strings.h>
-#include <sys/time.h>
 #include <time.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
 #include <X11/Xlib.h>
 
-char *tzargentina = "America/Buenos_Aires";
-char *tzutc = "UTC";
-char *tzberlin = "Europe/Berlin";
+char *tzmtl = "America/Montreal";
 
 static Display *dpy;
 
@@ -79,46 +72,59 @@ setstatus(char *str)
 	XSync(dpy, False);
 }
 
-char *
-loadavg(void)
+char 
+*battery(void)
 {
-	double avgs[3];
+    int nmarks,full,now;
+    char *bar; 
 
-	if (getloadavg(avgs, 3) < 0) {
-		perror("getloadavg");
-		exit(1);
-	}
+    FILE *battinfo = fopen("/sys/class/power_supply/BAT0/energy_full","r");
+    fscanf(battinfo,"%d",&full);
+    fclose(battinfo);
+    battinfo = fopen("/sys/class/power_supply/BAT0/energy_now","r");
+    fscanf(battinfo,"%d",&now);
+    fclose(battinfo);
 
-	return smprintf("%.2f %.2f %.2f", avgs[0], avgs[1], avgs[2]);
+    bar = (char*)malloc(sizeof(char) * 25);
+    nmarks = 10*now/full;
+
+    if((double)now/full <= 0.05) {
+        strcpy(bar,"*** BATTERIE < 5% ***");
+    } else {
+        strcpy(bar,"["); 
+        for(int i = 1; i < 11; i++)
+        {
+            if(i <= nmarks)
+                strcat(bar,"#");
+            else
+                strcat(bar," ");
+        }
+        strcat(bar,"]");
+    }
+   return bar;
 }
 
 int
 main(void)
 {
 	char *status;
-	char *avgs;
-	char *tmar;
-	char *tmutc;
-	char *tmbln;
+        char *batt;
+	char *tmmtl;
 
 	if (!(dpy = XOpenDisplay(NULL))) {
 		fprintf(stderr, "dwmstatus: cannot open display.\n");
 		return 1;
 	}
 
-	for (;;sleep(90)) {
-		avgs = loadavg();
-		tmar = mktimes("%H:%M", tzargentina);
-		tmutc = mktimes("%H:%M", tzutc);
-		tmbln = mktimes("KW %W %a %d %b %H:%M %Z %Y", tzberlin);
+	for (;;sleep(1)) {
+                batt = battery();
+		tmmtl = mktimes("%d-%m-%Y %H:%M", tzmtl);
 
-		status = smprintf("L:%s A:%s U:%s %s",
-				avgs, tmar, tmutc, tmbln);
+		status = smprintf("%s | %s",
+				batt,tmmtl);
 		setstatus(status);
-		free(avgs);
-		free(tmar);
-		free(tmutc);
-		free(tmbln);
+                free(batt);
+		free(tmmtl);
 		free(status);
 	}
 
