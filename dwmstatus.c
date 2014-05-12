@@ -8,6 +8,7 @@
 #include <X11/Xlib.h>
 
 char *tzmtl = "America/Montreal";
+char *tzgva = "Europe/Paris";
 
 static Display *dpy;
 
@@ -110,6 +111,7 @@ main(void)
 	char *status;
         char *batt;
 	char *tmmtl;
+	char *tmgva;
 
 	if (!(dpy = XOpenDisplay(NULL))) {
 		fprintf(stderr, "dwmstatus: cannot open display.\n");
@@ -119,9 +121,10 @@ main(void)
 	for (;;sleep(1)) {
                 batt = battery();
 		tmmtl = mktimes("%d-%m-%Y %H:%M", tzmtl);
+		tmgva = mktimes("%d-%m-%Y %H:%M", tzgva);
 
-		status = smprintf("%s | %s",
-				batt,tmmtl);
+		status = smprintf("%s | mtl: %s gva: %s",
+				batt,tmmtl,tmgva);
 		setstatus(status);
                 free(batt);
 		free(tmmtl);
