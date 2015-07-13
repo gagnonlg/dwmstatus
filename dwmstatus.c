@@ -12,8 +12,7 @@ const char *tzgva = "Europe/Paris";
 
 static Display *dpy;
 
-char *
-smprintf(const char *fmt, ...)
+char *smprintf(const char *fmt, ...)
 {
 	va_list fmtargs;
 	char *ret;
@@ -36,14 +35,12 @@ smprintf(const char *fmt, ...)
 	return ret;
 }
 
-void
-settz(const char *tzname)
+void settz(const char *tzname)
 {
 	setenv("TZ", tzname, 1);
 }
 
-char *
-mktimes(const char *fmt, const char *tzname)
+char* mktimes(const char *fmt, const char *tzname)
 {
 	char buf[129];
 	time_t tim;
@@ -66,15 +63,13 @@ mktimes(const char *fmt, const char *tzname)
 	return smprintf("%s", buf);
 }
 
-void
-setstatus(const char *str)
+void setstatus(const char *str)
 {
 	XStoreName(dpy, DefaultRootWindow(dpy), str);
 	XSync(dpy, False);
 }
 
-char 
-*battery(void)
+char* battery(void)
 {
     int nmarks,full,now;
     char *bar; 
@@ -93,8 +88,7 @@ char
         strcpy(bar,"*** BATTERIE < 5% ***");
     } else {
         strcpy(bar,"["); 
-        for(int i = 1; i < 11; i++)
-        {
+        for(int i = 1; i < 11; i++) {
             if(i <= nmarks)
                 strcat(bar,"#");
             else
@@ -105,8 +99,7 @@ char
    return bar;
 }
 
-int
-main(void)
+int main(void)
 {
 	char *status;
         char *batt;
