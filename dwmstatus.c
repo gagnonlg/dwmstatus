@@ -7,13 +7,13 @@
 #include <time.h>
 #include <X11/Xlib.h>
 
-char *tzmtl = "America/Montreal";
-char *tzgva = "Europe/Paris";
+const char *tzmtl = "America/Montreal";
+const char *tzgva = "Europe/Paris";
 
 static Display *dpy;
 
 char *
-smprintf(char *fmt, ...)
+smprintf(const char *fmt, ...)
 {
 	va_list fmtargs;
 	char *ret;
@@ -37,13 +37,13 @@ smprintf(char *fmt, ...)
 }
 
 void
-settz(char *tzname)
+settz(const char *tzname)
 {
 	setenv("TZ", tzname, 1);
 }
 
 char *
-mktimes(char *fmt, char *tzname)
+mktimes(const char *fmt, const char *tzname)
 {
 	char buf[129];
 	time_t tim;
@@ -67,7 +67,7 @@ mktimes(char *fmt, char *tzname)
 }
 
 void
-setstatus(char *str)
+setstatus(const char *str)
 {
 	XStoreName(dpy, DefaultRootWindow(dpy), str);
 	XSync(dpy, False);
