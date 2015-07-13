@@ -7,6 +7,7 @@
 #include <time.h>
 #include <X11/Xlib.h>
 
+const char *tmfmt = "%Y-%m-%d %H:%M";
 const char *tzmtl = "America/Montreal";
 const char *tzgva = "Europe/Paris";
 
@@ -113,8 +114,8 @@ int main(void)
 
 	for (;;sleep(1)) {
                 batt = battery();
-		tmmtl = mktimes("%d-%m-%Y %H:%M", tzmtl);
-		tmgva = mktimes("%d-%m-%Y %H:%M", tzgva);
+		tmmtl = mktimes(tmfmt, tzmtl);
+		tmgva = mktimes(tmfmt, tzgva);
 
 		status = smprintf("%s | mtl: %s gva: %s",
 				batt,tmmtl,tmgva);
