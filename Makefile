@@ -39,7 +39,7 @@ dist: clean
 install: all
 	@echo installing executable file to ${DESTDIR}${PREFIX}/bin
 	@mkdir -p ${DESTDIR}${PREFIX}/bin
-	@cp -f ${NAME} ${DESTDIR}${PREFIX}/bin
+	@cp -f ${NAME}.py ${DESTDIR}${PREFIX}/bin/${NAME}
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/${NAME}
 
 uninstall:
