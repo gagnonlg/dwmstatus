@@ -1,7 +1,11 @@
 #include <chrono>
+#include <fstream>
 #include <memory>
 #include <stdexcept>
 #include <thread>
+
+#include <experimental/filesystem>
+namespace filesystem = std::experimental::filesystem::v1;
 
 #include <X11/Xlib.h>
 
@@ -20,6 +24,14 @@ XDisplay::XDisplay() :
 {
 	if (!ptr)
 		throw std::runtime_error("Unable to open display");
+}
+
+std::ifstream open_ifstream(filesystem::path& path)
+{
+	std::ifstream file;
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	file.open(path);
+	return file;
 }
 
 int main()
