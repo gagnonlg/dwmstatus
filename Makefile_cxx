@@ -1,5 +1,5 @@
 CXXFLAGS = -O2 -Wall -Wextra -Weffc++ -std=c++17 -pedantic
-LIBS = -lX11
+LIBS = -lX11 -lstdc++fs
 
 dwmstatus_cxx: dwmstatus.cxx
 	g++ $(CXXFLAGS) -o $@ $< $(LIBS)

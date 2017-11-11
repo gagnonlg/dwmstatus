@@ -34,6 +34,23 @@ std::ifstream open_ifstream(filesystem::path& path)
 	return file;
 }
 
+filesystem::path get_battery_info_path()
+{
+	filesystem::path dirpath;
+
+	for (int i = 0; i < 256 || dirpath.empty(); i++) {
+		std::ostringstream path_stream;
+		path_stream << "/sys/class/power_supply/BAT" << i;
+		if (filesystem::is_directory(path_stream.str()))
+			dirpath.assign(path_stream.str());
+	}
+
+	if (dirpath.empty())
+		throw std::runtime_error("Unable to find battery info");
+
+	return dirpath;
+}
+
 int main()
 {
 	XDisplay dpy;
