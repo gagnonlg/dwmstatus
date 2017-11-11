@@ -7,16 +7,18 @@
 
 using namespace std::chrono_literals;
 
-class XDisplay : std::unique_ptr<Display, int(*)(Display*)> {
+class XDisplay {
 public:
 	XDisplay();
+private:
+	const std::unique_ptr<Display, int(*)(Display*)> ptr;
 };
 
 XDisplay::XDisplay() :
-	std::unique_ptr<Display, int(*)(Display*)>
-	(XOpenDisplay(nullptr), XCloseDisplay)
+	ptr(std::unique_ptr<Display, int(*)(Display*)>
+	    (XOpenDisplay(nullptr), XCloseDisplay))
 {
-	if (get() == nullptr)
+	if (!ptr)
 		throw std::runtime_error("Unable to open display");
 }
 
