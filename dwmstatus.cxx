@@ -26,7 +26,7 @@ XDisplay::XDisplay() :
 		throw std::runtime_error("Unable to open display");
 }
 
-std::ifstream open_ifstream(filesystem::path& path)
+std::ifstream open_ifstream(filesystem::path&& path)
 {
 	std::ifstream file;
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -49,6 +49,38 @@ filesystem::path get_battery_info_path()
 		throw std::runtime_error("Unable to find battery info");
 
 	return dirpath;
+}
+
+class BatteryInfo {
+public:
+	BatteryInfo(filesystem::path&& base_path);
+	double energy_now();
+	double energy_full();
+private:
+	std::ifstream _file_energy_now;
+	std::ifstream _file_energy_full;
+};
+
+BatteryInfo::BatteryInfo(filesystem::path&& base_path) :
+	_file_energy_now(open_ifstream(base_path / "energy_now")),
+	_file_energy_full(open_ifstream(base_path / "energy_full"))
+{
+}
+
+double BatteryInfo::energy_now()
+{
+	double energy_now;
+	_file_energy_now.seekg(0);
+	_file_energy_now >> energy_now;
+	return energy_now;
+}
+
+double BatteryInfo::energy_full()
+{
+	double energy_full;
+	_file_energy_full.seekg(0);
+	_file_energy_full >> energy_full;
+	return energy_full;
 }
 
 int main()
